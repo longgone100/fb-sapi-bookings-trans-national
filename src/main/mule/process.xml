@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<wsc:config name="Web_Service_Consumer_Config-TransNational" doc:name="Web Service Consumer Config" doc:id="b9af070a-a3e1-4fff-8fad-441b30765522" >
+		<wsc:connection wsdlLocation="wsdl\TransNationalBookingService.wsdl" service="Bookings" port="BookingsSOAP" address="http://${http.transnational.host}:${http.transnational.port}/"/>
+	</wsc:config>
+	<flow name="get-routes" doc:id="3822830f-ae83-4728-ac86-201de457dc8d" >
+		<logger level="INFO" doc:name="Start" doc:id="c63882f6-634a-4557-88db-dc6047e1974f" message="Start Get Routes"/>
+		<ee:transform doc:name="Web Service Input" doc:id="ad6e50d6-0eee-405e-85e3-83b4e32cb8cc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.example.org/Bookings/
+---
+{
+	ns0#getRoutes: {
+		in: null
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="TransFirst Web Service" doc:id="0b614e43-1570-4e72-9529-3be759b8e437" config-ref="Web_Service_Consumer_Config-TransNational" operation="getRoutes"/>
+		<ee:transform doc:name="CDAT A to XML" doc:id="52421af1-d267-4360-b89e-dede6a06b4aa" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0ns ns0 http://www.example.org/Bookings/
+output application/xml
+---read(payload.body.ns0#getRoutesResponse.out,"application/xml")
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Response Body" doc:id="9420b984-6702-4757-be7a-3d09232a4c5f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.ROUTELIST.*ROUTEINFO map ( rOUTEINFO , indexOfROUTEINFO ) -> {
+	originLocation: {
+		locationCode: rOUTEINFO.ORIGIN default ""
+	},
+	destinationLocation: {
+		locationCode: rOUTEINFO.DESTINATION default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End" doc:id="db5d8d07-ea53-4df2-ac29-dbad66fd29e7" message="End  Get Routes"/>
+	</flow>
+	<flow name="get-schedules" doc:id="8dc8beda-64e3-494f-9826-930dd328939c" >
+		<logger level="INFO" doc:name="Start" doc:id="be8a8a97-f541-472d-93d5-5e32b11ac529" message="Start Get Schedules - departureLocationCode=#[attributes.queryParams.departureLocationCode], destinationLocationCode=#[attributes.queryParams.destinationLocationCode]"/>
+		<ee:transform doc:name="Response Body" doc:id="68500ed2-a0de-423b-8aad-0b24ef3824de" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Method not yet implemneted.",
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="501" doc:name="HTTP Status 501" doc:id="16ed6f2d-6a94-4185-88ff-a2034a037c75" variableName="httpStatus "/>
+		<logger level="INFO" doc:name="End" doc:id="3f45fef8-3a7f-4036-9ada-75c29ac922ad" message="End Get Schedules"/>
+	</flow>
+</mule>

@@ -1,0 +1,58 @@
+#%RAML 1.0
+title: sapi-bookings-trans-national
+version: 1.0.0
+
+protocols: [HTTPS]
+
+uses: 
+  bookingsLib: exchange_modules/13e25717-26e6-4997-a2e2-1a9169951d9d/bcm-agent-bookings/1.0.0/bcm-agent-bookings.raml
+  
+traits:
+   compliant: !include exchange_modules/13e25717-26e6-4997-a2e2-1a9169951d9d/compliant/1.0.0/compliant.raml
+   client-id-enforcement: !include exchange_modules/13e25717-26e6-4997-a2e2-1a9169951d9d/client-id-enforcement/1.0.0/client-id-enforcement.raml
+
+/{transportType}:
+  /{transportCompany}:
+    /routes:
+      get:
+        description: API to get API deployment info
+        is: [compliant, client-id-enforcement]
+        headers: 
+        responses: 
+          200:
+            headers: 
+              X-Correlation-ID:
+                type: string
+                required: false
+                description: Transaction ID for the request. This will be the same as passed in the request header (if present) else the API generates a unique ID.
+            body: 
+              application/json:
+                type: bookingsLib.Routes
+                example: !include exchange_modules/13e25717-26e6-4997-a2e2-1a9169951d9d/bcm-agent-bookings/1.0.0/examples/routes.json
+                  
+
+    /schedules:
+      get:
+        description: API to get API deployment info
+        is: [compliant, client-id-enforcement]
+        headers: 
+        queryParameters:
+          departureLocationCode:
+            type: string
+            description: The departure location code, selected by the customer
+            required: true
+          destinationLocationCode:
+            type: string
+            description: The destination location code, selected by the customer
+            required: true            
+        responses: 
+          200:
+            headers: 
+              X-Correlation-ID:
+                type: string
+                required: false
+                description: Transaction ID for the request. This will be the same as passed in the request header (if present) else the API generates a unique ID.
+            body: 
+              application/json:
+                type: bookingsLib.DepartureSchedules
+                example: !include exchange_modules/13e25717-26e6-4997-a2e2-1a9169951d9d/bcm-agent-bookings/1.0.0/examples/departureSchedules.json

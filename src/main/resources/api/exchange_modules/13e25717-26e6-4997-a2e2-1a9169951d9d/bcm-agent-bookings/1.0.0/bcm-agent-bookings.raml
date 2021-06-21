@@ -1,0 +1,49 @@
+#%RAML 1.0 Library
+usage:
+
+types:
+
+  Location:
+    properties:
+      locationCode:
+        type: string
+        required: true
+        description: The location code
+      locationDesc:
+        type: string
+        required: false      
+        description: The location description
+
+  Route:
+    properties:
+      originLocation:
+        type: Location
+      destinationLocation:
+        type: Location
+  
+  Routes:
+      type: array
+      items:
+        Route
+
+  DepartureSchedule:
+    properties:
+      availableSeats:
+        type: integer
+        required: true    
+        description: Number of available seats for the schedule
+      departureDateTime:
+        type: datetime
+        required: true    
+        description: Departure date time according to the timezone
+      travelRoute: 
+        type: Route
+        required: true        
+        description: The travel route    
+
+  DepartureSchedules:
+    properties:
+      departureSchedules:
+        type: array
+        items:
+          DepartureSchedule

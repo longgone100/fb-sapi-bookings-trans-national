@@ -1,0 +1,13 @@
+#%RAML 1.0 Trait
+
+description: This trait is used to enforce Client ID & Secret based policy to the API resources.
+
+headers: 
+  X-Client-Id:
+    description: The Client Id assigned to the consuming application.
+    type: string
+    required: true 
+  X-Client-Secret:
+    description: The Client Secret assigned to the consuming application.
+    type: string
+    required: true

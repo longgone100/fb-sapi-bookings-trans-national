@@ -1,0 +1,10 @@
+#%RAML 1.0 Trait
+
+description: This trait defines the custom headers that should be sent/received by all the APIs.
+
+headers:
+  X-Correlation-Id:
+    description: |
+      Pass the Correlation Id in this header. If this is not passed, the API will generate one and pass it in the response. This can be used for end to end tracking purpose. It is recommended that this field be populated with type-4 UUID.
+    type: string
+    required: false

@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="HttpRequestAttributes" format="java">
+      <types:shape format="java" element="org.mule.extension.http.api.HttpRequestAttributes"/>
+    </types:type>
+    <types:type name="GetRoutesResponse" format="json">
+      <types:shape format="weave" example="api/exchange_modules/13e25717-26e6-4997-a2e2-1a9169951d9d/bcm-agent-bookings/1.0.0/examples/routes.json"><![CDATA[%dw 2.0
+
+type GetRoutesResponse = Array<{|  originLocation: {| locationCode: String |},   destinationLocation: {| locationCode: String |}|}> {"example": "[{\\\"originLocation\\\":{\\\"locationCode\\\":\\\"BEN-SG\\\"},\\\"destinationLocation\\\":{\\\"locationCode\\\":\\\"KLG-MY\\\"}}]"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="GetRoutesTransNationalResponse" format="xml">
+      <types:example format="xml" element="ROUTELIST" location="examples/GetRoutesTransNational.xml"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#68500ed2-a0de-423b-8aad-0b24ef3824de">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:attributes type="HttpRequestAttributes"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#9420b984-6702-4757-be7a-3d09232a4c5f">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="GetRoutesTransNationalResponse"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="GetRoutesResponse"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
