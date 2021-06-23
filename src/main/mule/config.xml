@@ -4,7 +4,11 @@
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
 http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd">
     <http:listener-config name="sapi-bookings-trans-national-httpListenerConfig">
-        <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" />
+        <http:listener-connection host="${http.listener.host}" port="${http.listener.port}" protocol="HTTPS">
+			<tls:context >
+				<tls:key-store type="jks" path="keystore/keystore.jks" alias="firstcoach" keyPassword="ronald" password="ronald" />
+			</tls:context>
+		</http:listener-connection>
     </http:listener-config>
     <apikit:config name="sapi-bookings-trans-national-config" api="sapi-bookings-trans-national.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 	<global-property doc:name="Global Property" doc:id="1b8e8fd3-f439-4ba8-994c-302952fa1427" name="mule.env" value="local" />
